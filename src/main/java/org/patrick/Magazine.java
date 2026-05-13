@@ -25,4 +25,9 @@ public class Magazine extends Item {
                 issueNumber + "," +
                 publisher;
     }
+
+    @Override
+    public String getCreator() {
+        return publisher;
+    }
 }

@@ -30,5 +30,7 @@ public abstract class Item {
      * @return a CSV representation of the item
      */
     public abstract String toCSV();
+
+    public abstract String getCreator();
 }
 

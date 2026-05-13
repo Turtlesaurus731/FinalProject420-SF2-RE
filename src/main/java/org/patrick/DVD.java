@@ -27,4 +27,9 @@ public class DVD extends Item {
                 director + "," +
                 duration;
     }
+
+    @Override
+    public String getCreator() {
+        return director;
+    }
 }

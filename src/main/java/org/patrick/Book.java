@@ -46,4 +46,9 @@ public class Book extends Item{
                 author + "," +
                 genre;
     }
+
+    @Override
+    public String getCreator() {
+        return author;
+    }
 }
