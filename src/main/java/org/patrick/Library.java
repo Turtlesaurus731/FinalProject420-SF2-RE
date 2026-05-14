@@ -64,6 +64,9 @@ public class Library {
         if (!user.canBorrow(item)) {
             throw new IllegalStateException("Borrow limit exceeded");
         }
+        if (item.getStatus() == Item.Status.LOST) {
+            throw new IllegalStateException("Item is lost and cannot be borrowed right now");
+        }
 
         user.borrowItem(item);
         item.setStatus(Item.Status.BORROWED);
@@ -278,6 +281,10 @@ public class Library {
         return item;
     }
 
+    /**
+     * Backs up user data to a CSV file
+     * @param path the CSV path
+     */
     public void backupUsersCSV(String path) {
         String userPath = (path == null || path.isEmpty()) ? Constants.USERS_CSV_PATH : path + "/users.csv";
 
@@ -291,6 +298,11 @@ public class Library {
             System.out.println("Failed to backup users CSV");
         }
     }
+
+    /**
+     * Backs up item data to a CSV file
+     * @param path the CSV path
+     */
     public void backupItemsCSV(String path) {
         String itemPath = (path == null || path.isEmpty()) ? Constants.ITEMS_CSV_PATH : path + "/items.csv";
 
@@ -303,5 +315,18 @@ public class Library {
         } catch (Exception e) {
             System.out.println("Failed to backup items CSV");
         }
+    }
+
+    /**
+     * Marks an item as lost in the library.
+     * The item status is updated, and it is stored in the lost items set.
+     * @param item the item to mark as lost
+     */
+    public void markItemAsLost(Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Item cannot be null");
+        }
+        item.setStatus(Item.Status.LOST);
+        lostItems.add(item);
     }
 }

@@ -33,8 +33,6 @@ public class Book extends Item{
             }
         }
         return true;
-
-        //TODO: Check logic again later because I am tired -v- (problem for me of the morrow)
     }
 
     @Override
