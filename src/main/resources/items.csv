@@ -1,5 +1,5 @@
 Book,0001,How to pass my class,IN_STORE,1234567890123,PatrickA,Fantasy
-Book,0002,How to pass my class,IN_STORE,1234567890123,PatrickA,Fantasy
-DVD,0003,How to sleep,IN_STORE,Sleepy Turtle,123
-DVD,0004,How to sleep,IN_STORE,Sleepy Turtle,123
-Magazine,0005,Ran out of Ideas,IN_STORE,42,PatrickPress
+Book,0001,How to pass my class,IN_STORE,1234567890123,PatrickA,Fantasy
+DVD,0002,How to sleep,IN_STORE,Sleepy Turtle,123
+DVD,0002,How to sleep,IN_STORE,Sleepy Turtle,123
+Magazine,0003,Ran out of Ideas,LOST,42,PatrickPress
