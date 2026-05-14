@@ -16,7 +16,7 @@ public class Library {
     private Stack<Item> borrowedStack;
     private Queue<Item> returnQueue;
     private Set<Item> lostItems;
-    private Map<String, Item> itemMap; //TODO: update in class diagram and fix the typo there while I am at it
+    private Map<String, Item> itemMap;
 
     public Library() {
         this.items = new ArrayList<>();
@@ -50,11 +50,22 @@ public class Library {
      * @param item the item being borrowed
      */
     public void borrowItem(User user, Item item) {
-        if (user.canBorrow(item) && item.getStatus() == Item.Status.IN_STORE) {
-            user.borrowItem(item);
-            item.setStatus(Item.Status.BORROWED);
-            borrowedStack.push(item);
+        if (user == null || item == null) {
+            throw new IllegalArgumentException("User or item cannot be null");
         }
+        if (!users.contains(user)) {
+            throw new IllegalArgumentException("User not registered");
+        }
+        if (item.getStatus() != Item.Status.IN_STORE) {
+            throw new IllegalStateException("Item already borrowed");
+        }
+        if (!user.canBorrow(item)) {
+            throw new IllegalStateException("Borrow limit exceeded");
+        }
+
+        user.borrowItem(item);
+        item.setStatus(Item.Status.BORROWED);
+        borrowedStack.push(item);
     }
 
     /**
@@ -63,6 +74,12 @@ public class Library {
      * @param item the item being returned
      */
     public void returnItem(User user, Item item) {
+        if (user == null || item == null) {
+            throw new IllegalArgumentException("User or item cannot be null");
+        }
+        if (item.getStatus() != Item.Status.BORROWED) {
+            throw new IllegalStateException("Item is not currently borrowed");
+        }
         user.returnItem(item);
         item.setStatus(Item.Status.IN_STORE);
         returnQueue.add(item);

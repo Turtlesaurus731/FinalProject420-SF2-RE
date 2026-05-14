@@ -10,8 +10,6 @@ import lombok.ToString;
 public class DVD extends Item {
     private String director;
     private int duration;
-    //TODO : update class diagram at V3 to change double to int.
-
 
     public DVD(String title, String director, int duration) {
         super(title);
