@@ -59,4 +59,13 @@ public class Admin extends User implements Reportable {
         library.backupUsersCSV("");
         library.backupItemsCSV("");
     }
+
+    /**
+     * Updates the status of an Item to lost int the library
+     * @param library the library containing the item
+     * @param item the item whose status is to be updated
+     */
+    public void markItemAsLost(Library library, Item item) {
+        library.markItemAsLost(item);
+    }
 }
