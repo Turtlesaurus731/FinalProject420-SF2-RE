@@ -19,7 +19,8 @@ public class Magazine extends Item {
 
     @Override
     public String toCSV() {
-        return id + "," +
+        return "Magazine," +
+                id + "," +
                 title + "," +
                 status + "," +
                 issueNumber + "," +

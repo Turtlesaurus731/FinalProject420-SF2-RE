@@ -13,7 +13,7 @@ public class Student extends User {
 
     @Override
     public int getBorrowLimit() {
-        return 5;
+        return Constants.MAX_BOOKS_STUDENT;
     }
 
     @Override

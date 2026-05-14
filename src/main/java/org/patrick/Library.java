@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -122,7 +124,7 @@ public class Library {
         Item item = items.get(index);
 
         if (item instanceof Book book) {
-            if (book.getAuthor().toLowerCase().contains(author)) {
+            if (book.getAuthor().toLowerCase().contains(author.toLowerCase())) {
                 results.add(book);
             }
         }
@@ -149,7 +151,6 @@ public class Library {
      * @return matching items
      */
     public List<Item> searchByCreator(String creator) {
-        //TODO: ADD to class diagram ;v; this was so much simpler than searching only by author...
         return items.stream()
                 .filter(i -> i.getCreator().toLowerCase().contains(creator.toLowerCase()))
                 .collect(Collectors.toMap(Item::getId, i -> i, (a, b) -> a))
@@ -174,9 +175,133 @@ public class Library {
                 .toList();
     }
 
-    // TODO: CSV placeholders
-    public void loadUsersCSV(String path) {}
-    public void loadItemsCSV(String path) {}
-    public void backupUsersCSV(String path) {}
-    public void backupItemsCSV(String path) {}
+    /**
+     * Loads users from a CSV file.
+     * @param path the CSV file path
+     */
+    public void loadUsersCSV(String path) {
+        String userPath = (path == null || path.isEmpty()) ? Constants.USERS_CSV_PATH : path + "/users.csv";
+        File file = new File(userPath);
+        try (Scanner input = new Scanner(file)) {
+            while (input.hasNextLine()) {
+                String line = input.nextLine();
+                String[] data = line.split(",");
+                String id = data[0];
+                String name = data[1];
+                String type = data[2];
+                User user = getUser(type, name);
+
+                if (user != null) {
+                    user.setId(id);
+                    addUser(user);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Failed to load users CSV");
+        }
+    }
+
+    /**
+     * Creates the correct user object from CSV data.
+     * @param type user type
+     * @param name user name
+     * @return created user
+     */
+    private static User getUser(String type, String name) {
+        User user = null;
+        switch (type) {
+            case "Student" -> user = new Student(name);
+            case "Teacher" -> user = new Teacher(name);
+            case "Admin" -> user = new Admin(name);
+        }
+        return user;
+    }
+
+    /**
+     * Loads items from a CSV file.
+     * @param path the CSV file path
+     */
+    public void loadItemsCSV(String path) {
+        String itemPath = (path == null || path.isEmpty()) ? Constants.ITEMS_CSV_PATH : path + "/items.csv";
+        File file = new File(itemPath);
+        try (Scanner input = new Scanner(file)) {
+            while (input.hasNextLine()) {
+                String line = input.nextLine();
+                String[] data = line.split(",");
+                String type = data[0];
+                String id = data[1];
+                String title = data[2];
+                Item.Status status = Item.Status.valueOf(data[3]);
+                Item item = getItem(type, data, title);
+
+                if (item != null) {
+                    item.setId(id);
+                    item.setStatus(status);
+                    addItem(item);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Failed to load items CSV");
+        }
+    }
+
+    /**
+     * Creates the correct item object from CSV data.
+     * @param type item type
+     * @param data CSV row data
+     * @param title item title
+     * @return created item
+     */
+    private static Item getItem(String type, String[] data, String title) {
+        Item item = null;
+
+        switch (type) {
+            case "Book" -> {
+                String isbn = data[4];
+                String author = data[5];
+                String genre = data[6];
+                item = new Book(title, isbn, author, genre);
+            }
+            case "DVD" -> {
+                String director = data[4];
+                int duration = Integer.parseInt(data[5]);
+                item = new DVD(title, director, duration);
+            }
+            case "Magazine" -> {
+                int issueNumber = Integer.parseInt(data[4]);
+                String publisher = data[5];
+                item = new Magazine(title, issueNumber, publisher);
+            }
+        }
+        return item;
+    }
+
+    public void backupUsersCSV(String path) {
+        String userPath = (path == null || path.isEmpty()) ? Constants.USERS_CSV_PATH : path + "/users.csv";
+
+        File file = new File(userPath);
+        try (FileWriter fw = new FileWriter(file)) {
+            for (User user : users) {
+                fw.write(user.toCSV() + "\n");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Failed to backup users CSV");
+        }
+    }
+    public void backupItemsCSV(String path) {
+        String itemPath = (path == null || path.isEmpty()) ? Constants.ITEMS_CSV_PATH : path + "/items.csv";
+
+        File file = new File(itemPath);
+        try (FileWriter fw = new FileWriter(file)) {
+            for (Item item : items) {
+                fw.write(item.toCSV() + "\n");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Failed to backup items CSV");
+        }
+    }
 }

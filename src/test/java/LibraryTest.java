@@ -117,7 +117,7 @@ public class LibraryTest {
             library.borrowItem(student, book);
             Assertions.fail("Expected IllegalStateException was not thrown");
         } catch (IllegalStateException e) {
-            Assertions.assertTrue(true);
+            Assertions.assertTrue(e.getMessage() != null);
         }
     }
 }

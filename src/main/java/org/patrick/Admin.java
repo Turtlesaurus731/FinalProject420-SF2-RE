@@ -26,12 +26,37 @@ public class Admin extends User implements Reportable {
      * @return placeholder
      */
     @Override
-    public String generateReport() {
-        //TODO: implement in later deliverable
-        return "Report generation not implemented yet";
+    public String generateReport(Library library) {
+        String report = "Library report:\n\n";
+        report += "Borrowed Items:\n";
+        for (Item item : library.getItems()) {
+            if (item.getStatus() == Item.Status.BORROWED) {
+                report += item.toCSV() + "\n";
+            }
+        }
+
+        report += "\nIn store Items\n";
+        for (Item item : library.getItems()) {
+            if (item.getStatus() == Item.Status.IN_STORE) {
+                report += item.toCSV() + "\n";
+            }
+        }
+
+        report += "\nLost Items:\n";
+        for (Item item : library.getItems()) {
+            if (item.getStatus() == Item.Status.LOST) {
+                report += item.toCSV() + "\n";
+            }
+        }
+        return report;
     }
 
-    public void backupData() {
-        //TODO: implement in later deliverable
+    /**
+     * Backs up all users and items from the library into CSV files.
+     * @param library the library containing users and items to be saved
+     */
+    public void backupData(Library library) {
+        library.backupUsersCSV("");
+        library.backupItemsCSV("");
     }
 }

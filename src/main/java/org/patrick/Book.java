@@ -39,7 +39,8 @@ public class Book extends Item{
 
     @Override
     public String toCSV() {
-        return id + "," +
+        return "Book," +
+                id + "," +
                 title + "," +
                 status + "," +
                 isbn + "," +
