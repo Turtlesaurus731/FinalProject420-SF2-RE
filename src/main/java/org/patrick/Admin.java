@@ -22,8 +22,8 @@ public class Admin extends User implements Reportable {
     }
 
     /**
-     * Placeholder for report feature (used later with Reportable interface)
-     * @return placeholder
+     * Generate a report of all items in items.csv with their status
+     * @return the report of all items in items.csv with their status
      */
     @Override
     public String generateReport(Library library) {
@@ -56,8 +56,8 @@ public class Admin extends User implements Reportable {
      * @param library the library containing users and items to be saved
      */
     public void backupData(Library library) {
-        library.backupUsersCSV("");
-        library.backupItemsCSV("");
+        library.backupUsersCSV(null);
+        library.backupItemsCSV(null);
     }
 
     /**

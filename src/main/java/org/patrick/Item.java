@@ -31,6 +31,19 @@ public abstract class Item {
      */
     public abstract String toCSV();
 
+    /**
+     * Gets the Creator of an Item
+     * @return the creator of an Item
+     */
     public abstract String getCreator();
+
+    /**
+     * Returns a logical search key used to group identical items
+     * in search results (to avoid duplicate copies appearing in a search).
+     * @return the search key for this item
+     */
+    public String getSearchKey() {
+        return id;
+    }
 }
 

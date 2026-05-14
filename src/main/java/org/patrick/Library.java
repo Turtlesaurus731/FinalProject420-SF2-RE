@@ -58,14 +58,14 @@ public class Library {
         if (!users.contains(user)) {
             throw new IllegalArgumentException("User not registered");
         }
+        if (item.getStatus() == Item.Status.LOST) {
+            throw new IllegalStateException("Item is lost and cannot be borrowed right now");
+        }
         if (item.getStatus() != Item.Status.IN_STORE) {
             throw new IllegalStateException("Item already borrowed");
         }
         if (!user.canBorrow(item)) {
             throw new IllegalStateException("Borrow limit exceeded");
-        }
-        if (item.getStatus() == Item.Status.LOST) {
-            throw new IllegalStateException("Item is lost and cannot be borrowed right now");
         }
 
         user.borrowItem(item);
@@ -96,17 +96,17 @@ public class Library {
      * @return matching items
      */
     public List<Item> recursiveSearchByTitle(String title) {
-        List<Item> results = new ArrayList<>();
+        Map<String, Item> results = new HashMap<>();
         recursiveTitleHelper(title.toLowerCase(), 0, results);
-        return results;
+        return new ArrayList<>(results.values());
     }
 
-    private void recursiveTitleHelper(String title, int index, List<Item> results) {
+    private void recursiveTitleHelper(String title, int index, Map<String, Item> results) {
         if (index >= items.size()) return;
         Item item = items.get(index);
 
-        if (item.getTitle().toLowerCase().contains(title.toLowerCase())) {
-            results.add(item);
+        if (item.getTitle().toLowerCase().contains(title)) {
+            results.put(item.getSearchKey(), item);
         }
         recursiveTitleHelper(title, index + 1, results);
     }
@@ -117,18 +117,18 @@ public class Library {
      * @return matching books
      */
     public List<Book> recursiveSearchByAuthor(String author) {
-        List<Book> results = new ArrayList<>();
+        Map<String, Book> results = new HashMap<>();
         recursiveAuthorHelper(author.toLowerCase(), 0, results);
-        return results;
+        return new ArrayList<>(results.values());
     }
 
-    private void recursiveAuthorHelper(String author, int index, List<Book> results) {
+    private void recursiveAuthorHelper(String author, int index, Map<String, Book> results) {
         if (index >= items.size()) return;
         Item item = items.get(index);
 
         if (item instanceof Book book) {
-            if (book.getAuthor().toLowerCase().contains(author.toLowerCase())) {
-                results.add(book);
+            if (book.getAuthor().toLowerCase().contains(author)) {
+                results.put(book.getIsbn(), book);
             }
         }
         recursiveAuthorHelper(author, index + 1, results);
@@ -142,7 +142,7 @@ public class Library {
     public List<Item> streamSearchByTitle(String title) {
         return items.stream()
                 .filter(i -> i.getTitle().toLowerCase().contains(title.toLowerCase()))
-                .collect(Collectors.toMap(Item::getId, i -> i, (a, b) -> a))
+                .collect(Collectors.toMap(Item::getSearchKey, i -> i, (a, b) -> a))
                 .values()
                 .stream()
                 .toList();
@@ -156,7 +156,7 @@ public class Library {
     public List<Item> searchByCreator(String creator) {
         return items.stream()
                 .filter(i -> i.getCreator().toLowerCase().contains(creator.toLowerCase()))
-                .collect(Collectors.toMap(Item::getId, i -> i, (a, b) -> a))
+                .collect(Collectors.toMap(Item::getSearchKey, i -> i, (a, b) -> a))
                 .values()
                 .stream()
                 .toList();
@@ -172,7 +172,7 @@ public class Library {
                 .filter(i -> i instanceof Book)
                 .map(i -> (Book) i)
                 .filter(b -> b.getAuthor().toLowerCase().contains(author.toLowerCase()))
-                .collect(Collectors.toMap(Book::getId, b -> b, (a, b) -> a))
+                .collect(Collectors.toMap(Book::getIsbn, b -> b, (a, b) -> a))
                 .values()
                 .stream()
                 .toList();
@@ -201,7 +201,7 @@ public class Library {
             }
 
         } catch (Exception e) {
-            System.out.println("Failed to load users CSV");
+            throw new RuntimeException("Failed to load users CSV from file: " + path, e);
         }
     }
 
@@ -246,7 +246,7 @@ public class Library {
             }
 
         } catch (Exception e) {
-            System.out.println("Failed to load items CSV");
+            throw new RuntimeException("Failed to load items CSV from file: " + path, e);
         }
     }
 
@@ -295,7 +295,7 @@ public class Library {
             }
 
         } catch (Exception e) {
-            System.out.println("Failed to backup users CSV");
+            throw new RuntimeException("Failed to backup users CSV to file: " + path, e);
         }
     }
 
@@ -313,7 +313,7 @@ public class Library {
             }
 
         } catch (Exception e) {
-            System.out.println("Failed to backup items CSV");
+            throw new RuntimeException("Failed to backup items CSV to file: " + path, e);
         }
     }
 

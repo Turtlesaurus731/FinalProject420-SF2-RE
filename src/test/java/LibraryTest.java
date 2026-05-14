@@ -105,7 +105,6 @@ public class LibraryTest {
     @Test
     @DisplayName("borrowItem(User, Item): cannot borrow same item twice")
     public void borrowSameItemTwiceTest() {
-
         Library library = new Library();
         Student student = new Student("Patrick");
         Book book = new Book("I want to sleep", "12345", "Sleepy Turtle", "Action");
@@ -117,7 +116,28 @@ public class LibraryTest {
             library.borrowItem(student, book);
             Assertions.fail("Expected IllegalStateException was not thrown");
         } catch (IllegalStateException e) {
-            Assertions.assertTrue(e.getMessage() != null);
+            Assertions.assertEquals("Item already borrowed", e.getMessage());
         }
+    }
+
+    @Test
+    @DisplayName("streamSearchByTitle: returns only one logical item")
+    public void streamSearchNoDuplicatesTest() {
+        Library library = new Library();
+        library.addItem(new Book("Java", "111", "IDK", "Education"));
+        library.addItem(new Book("Java", "111", "IDK", "Education")); // duplicate copy
+        int actual = library.streamSearchByTitle("Java").size();
+
+        Assertions.assertEquals(1, actual);
+    }
+
+    @Test
+    @DisplayName("streamSearchByTitle: returns empty list if no match")
+    public void emptySearchTest() {
+        Library library = new Library();
+        library.addItem(new Book("How to catch them all", "111", "Squirtle", "Fantasy"));
+        int actual = library.streamSearchByTitle("How to not catch them all").size();
+
+        Assertions.assertEquals(0, actual);
     }
 }

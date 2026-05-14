@@ -31,4 +31,9 @@ public class DVD extends Item {
     public String getCreator() {
         return director;
     }
+
+    @Override
+    public String getSearchKey() {
+        return getTitle() + "-" + director;
+    }
 }

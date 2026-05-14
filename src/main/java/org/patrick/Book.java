@@ -50,4 +50,9 @@ public class Book extends Item{
     public String getCreator() {
         return author;
     }
+
+    @Override
+    public String getSearchKey() {
+        return isbn;
+    }
 }

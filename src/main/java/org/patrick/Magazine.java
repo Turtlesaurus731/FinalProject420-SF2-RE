@@ -31,4 +31,9 @@ public class Magazine extends Item {
     public String getCreator() {
         return publisher;
     }
+
+    @Override
+    public String getSearchKey() {
+        return getTitle() + "-" + issueNumber;
+    }
 }
